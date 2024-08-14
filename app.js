@@ -21,8 +21,7 @@ const products = [
 
 const createProductCard = () => {
   let productListContainer = document.querySelectorAll('.row')[0];
-  products.map((product)=>{
-    console.log(product)
+  products.map((product, index)=>{
     let productCard = `
       <div class="col-md-4">
         <div class="card">
@@ -30,7 +29,7 @@ const createProductCard = () => {
             <div class="card-body">
                 <h5 class="card-title">${product.name}</h5>
                 <p class="card-text">${product.price}</p>
-                <button class="btn btn-primary add-to-cart" data-price="20" data-name="Product 2">Add to Cart</button>
+                <button onclick="addToCartinObj(${index})" class="btn btn-primary add-to-cart" data-price="20" data-name="Product 2">Add to Cart</button>
             </div>
         </div>
       </div>`;
@@ -39,3 +38,26 @@ const createProductCard = () => {
 }
 
 createProductCard();
+
+let cart = {}
+
+let addToCartinObj = (index)=> {
+  const { id } = products[index];
+  const totalItemsEl = document.querySelectorAll('#total-items')[0];
+  const totalPriceEl = document.querySelectorAll('#total-price')[0];
+
+  if(id in cart) {
+    cart[id].qty = cart[id].qty + 1;
+    cart[id].totalPrice = cart[id].qty * cart[id].price.slice(1);
+    totalItemsEl.innerHTML = cart[id].qty;
+    totalPriceEl.innerHTML = cart[id].totalPrice;
+  }
+  else {
+    cart[id] = {...products[index]};
+    cart[id].qty = 1;
+    cart[id].totalPrice = cart[id].qty * cart[id].price.slice(1);
+    totalItemsEl.innerHTML = cart[id].qty;
+    totalPriceEl.innerHTML = cart[id].totalPrice;
+  }
+  console.log(cart[id].totalPrice);
+}
