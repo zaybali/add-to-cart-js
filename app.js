@@ -48,16 +48,24 @@ let addToCartinObj = (index)=> {
 
   if(id in cart) {
     cart[id].qty = cart[id].qty + 1;
-    cart[id].totalPrice = cart[id].qty * cart[id].price.slice(1);
-    totalItemsEl.innerHTML = cart[id].qty;
-    totalPriceEl.innerHTML = cart[id].totalPrice;
+    cart[id].totalItemPrice = parseFloat(cart[id].qty * cart[id].price.slice(1));
+    // totalItemsEl.innerHTML = cart[id].qty;
+    // totalPriceEl.innerHTML = cart[id].totalPrice;
   }
   else {
     cart[id] = {...products[index]};
     cart[id].qty = 1;
-    cart[id].totalPrice = cart[id].qty * cart[id].price.slice(1);
-    totalItemsEl.innerHTML = cart[id].qty;
-    totalPriceEl.innerHTML = cart[id].totalPrice;
+    cart[id].totalItemPrice = cart[id].qty * parseFloat(cart[id].price.slice(1));
+    // totalItemsEl.innerHTML = cart[id].qty;
+    // totalPriceEl.innerHTML = cart[id].totalPrice;
   }
-  console.log(cart[id].totalPrice);
+
+  let totalItems = 0;
+  let totalPrice = 0;
+  for(let key in cart) {
+    totalItems += cart[key].qty;
+    totalPrice += cart[key].totalItemPrice;
+  }
+  totalItemsEl.innerHTML = totalItems;
+  totalPriceEl.innerHTML = totalPrice;
 }
