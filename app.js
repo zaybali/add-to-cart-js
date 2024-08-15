@@ -40,6 +40,93 @@ const createProductCard = () => {
 
 createProductCard();
 
+let cart = [];
+
+
+
+function addToCartinArr(index) {
+  const { id } = products[index];
+  const totalItemsEl = document.querySelectorAll('#total-items')[0];
+  const totalPriceEl = document.querySelectorAll('#total-price')[0];
+
+  let matchFound = false;
+  let targetIndex;
+
+  cart.forEach((item, ind)=> {
+    if(item.id === id) {
+      matchFound = true;
+      targetIndex = ind;
+    }
+  });
+
+  if(matchFound) {
+    const product = cart[targetIndex];
+
+    product.qty += 1;
+    product.subTotal = product.qty * parseFloat(product.price.slice(1));
+  }
+
+  else {
+    let cloneProduct = { ...products[index]};
+    cloneProduct.qty = 1;
+    cloneProduct.subTotal = cloneProduct.qty * parseFloat(cloneProduct.price.slice(1));
+    cart.push(cloneProduct)
+  }
+  // console.log(cart);
+
+  let totalItems = 0;
+  let totalPrice = 0;
+  // for(let key in cart) {
+  //   // console.log(cart[key]);
+  //   totalItems += cart[key].qty;
+  //   totalPrice += cart[key].subTotal;
+  // }
+  cart.forEach((item)=> {
+    totalItems += item.qty;
+    totalPrice +=item.subTotal;
+  })
+  totalItemsEl.innerHTML = totalItems;
+  totalPriceEl.innerHTML = totalPrice.toFixed(2);
+}
+
+
+function removeFromCart(index) {
+  const { id } = cart[index];
+  const totalItemsEl = document.querySelectorAll('#total-items')[0];
+  const totalPriceEl = document.querySelectorAll('#total-price')[0];
+
+  let targetIndex = cart.findIndex((item)=>item.id === id);
+
+  if(targetIndex !== -1) {
+    const product = cart[targetIndex];
+
+    if(product.qty > 1) {
+
+      product.qty -= 1;
+      product.subTotal = product.qty * parseFloat(product.price.slice(1));
+    }
+    else {
+      cart.splice(targetIndex, 1);
+    }
+  }
+  console.log(cart);
+  let totalItems = 0;
+  let totalPrice = 0;
+  cart.forEach((item)=>{
+    totalItems += item.qty;
+    console.log(item)
+    totalPrice += item.subTotal;
+    console.log(typeof(totalPrice));
+  });
+
+  totalItemsEl.innerHTML = totalItems;
+  totalPriceEl.innerHTML = totalPrice.toFixed(2);
+}
+
+
+
+
+
 // let cart = {}
 
 // let addToCartinObj = (index)=> {
@@ -70,47 +157,3 @@ createProductCard();
 //   totalItemsEl.innerHTML = totalItems;
 //   totalPriceEl.innerHTML = totalPrice + ".00";
 // }
-
-let cart = [];
-const totalItemsEl = document.querySelectorAll('#total-items')[0];
-const totalPriceEl = document.querySelectorAll('#total-price')[0];
-
-
-function addToCartinArr(index) {
-  const { id } = products[index];
- 
-  let matchFound = false;
-  let targetIndex;
-
-  cart.forEach((item, ind)=> {
-    if(item.id === id) {
-      matchFound = true;
-      targetIndex = ind;
-    }
-  });
-
-  if(matchFound) {
-    const product = cart[targetIndex];
-
-    product.qty += 1;
-    product.subTotal = product.qty * product.price.slice(1);
-  }
-
-  else {
-    let cloneProduct = { ...products[index]};
-    cloneProduct.qty = 1;
-    cloneProduct.subTotal = cloneProduct.qty * cloneProduct.price.slice(1);
-    cart.push(cloneProduct)
-  }
-  console.log(cart);
-
-  let totalItems = 0;
-  let totalPrice = 0;
-  for(let key in cart) {
-    console.log(cart[key]);
-    totalItems += cart[key].qty;
-    totalPrice += cart[key].subTotal;
-  }
-  totalItemsEl.innerHTML = totalItems;
-  totalPriceEl.innerHTML = totalPrice + ".00";
-}
