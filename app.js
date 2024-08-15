@@ -29,7 +29,8 @@ const createProductCard = () => {
             <div class="card-body">
                 <h5 class="card-title">${product.name}</h5>
                 <p class="card-text">${product.price}</p>
-                <button onclick="addToCartinObj(${index})" class="btn btn-primary add-to-cart" data-price="20" data-name="Product 2">Add to Cart</button>
+                <button onclick="addToCartinArr(${index})" class="btn btn-primary add-to-cart mt-1" data-price="20" data-name="Product 2">Add to Cart</button>
+                <button onclick="removeFromCart(${index})"  class="btn btn-danger mt-1">Remove from Cart</button>
             </div>
         </div>
       </div>`;
@@ -39,33 +40,77 @@ const createProductCard = () => {
 
 createProductCard();
 
-let cart = {}
+// let cart = {}
 
-let addToCartinObj = (index)=> {
+// let addToCartinObj = (index)=> {
+//   const { id } = products[index];
+//   const totalItemsEl = document.querySelectorAll('#total-items')[0];
+//   const totalPriceEl = document.querySelectorAll('#total-price')[0];
+
+//   if(id in cart) {
+//     cart[id].qty = cart[id].qty + 1;
+//     cart[id].totalItemPrice = parseFloat(cart[id].qty * cart[id].price.slice(1));
+//     // totalItemsEl.innerHTML = cart[id].qty;
+//     // totalPriceEl.innerHTML = cart[id].totalPrice;
+//   }
+//   else {
+//     cart[id] = {...products[index]};
+//     cart[id].qty = 1;
+//     cart[id].totalItemPrice = cart[id].qty * parseFloat(cart[id].price.slice(1));
+//     // totalItemsEl.innerHTML = cart[id].qty;
+//     // totalPriceEl.innerHTML = cart[id].totalPrice;
+//   }
+
+//   let totalItems = 0;
+//   let totalPrice = 0;
+//   for(let key in cart) {
+//     totalItems += cart[key].qty;
+//     totalPrice += cart[key].totalItemPrice;
+//   }
+//   totalItemsEl.innerHTML = totalItems;
+//   totalPriceEl.innerHTML = totalPrice + ".00";
+// }
+
+let cart = [];
+const totalItemsEl = document.querySelectorAll('#total-items')[0];
+const totalPriceEl = document.querySelectorAll('#total-price')[0];
+
+
+function addToCartinArr(index) {
   const { id } = products[index];
-  const totalItemsEl = document.querySelectorAll('#total-items')[0];
-  const totalPriceEl = document.querySelectorAll('#total-price')[0];
+ 
+  let matchFound = false;
+  let targetIndex;
 
-  if(id in cart) {
-    cart[id].qty = cart[id].qty + 1;
-    cart[id].totalItemPrice = parseFloat(cart[id].qty * cart[id].price.slice(1));
-    // totalItemsEl.innerHTML = cart[id].qty;
-    // totalPriceEl.innerHTML = cart[id].totalPrice;
+  cart.forEach((item, ind)=> {
+    if(item.id === id) {
+      matchFound = true;
+      targetIndex = ind;
+    }
+  });
+
+  if(matchFound) {
+    const product = cart[targetIndex];
+
+    product.qty += 1;
+    product.subTotal = product.qty * product.price.slice(1);
   }
+
   else {
-    cart[id] = {...products[index]};
-    cart[id].qty = 1;
-    cart[id].totalItemPrice = cart[id].qty * parseFloat(cart[id].price.slice(1));
-    // totalItemsEl.innerHTML = cart[id].qty;
-    // totalPriceEl.innerHTML = cart[id].totalPrice;
+    let cloneProduct = { ...products[index]};
+    cloneProduct.qty = 1;
+    cloneProduct.subTotal = cloneProduct.qty * cloneProduct.price.slice(1);
+    cart.push(cloneProduct)
   }
+  console.log(cart);
 
   let totalItems = 0;
   let totalPrice = 0;
   for(let key in cart) {
+    console.log(cart[key]);
     totalItems += cart[key].qty;
-    totalPrice += cart[key].totalItemPrice;
+    totalPrice += cart[key].subTotal;
   }
   totalItemsEl.innerHTML = totalItems;
-  totalPriceEl.innerHTML = totalPrice;
+  totalPriceEl.innerHTML = totalPrice + ".00";
 }
