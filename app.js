@@ -29,7 +29,7 @@ const createProductCard = () => {
             <div class="card-body">
                 <h5 class="card-title">${product.name}</h5>
                 <p class="card-text">${product.price}</p>
-                <button onclick="addToCartinArr(${index})" class="btn btn-primary add-to-cart mt-1" data-price="20" data-name="Product 2">Add to Cart</button>
+                <button onclick="addToCart(${index})" class="btn btn-primary add-to-cart mt-1" data-price="20" data-name="Product 2">Add to Cart</button>
                 <button onclick="removeFromCart(${index})"  class="btn btn-danger mt-1">Remove from Cart</button>
             </div>
         </div>
@@ -41,101 +41,108 @@ const createProductCard = () => {
 // Call the function to generate product cards on page load
 createProductCard();
 
-// Initialize an empty array to store cart items
+
 let cart = [];
 
-// Function to add a product to the cart
-function addToCartinArr(index) {
-  // Destructure the id from the selected product
-  const { id } = products[index];
-  
-  // Select elements that display total items and total price
-  const totalItemsEl = document.querySelectorAll('#total-items')[0];
-  const totalPriceEl = document.querySelectorAll('#total-price')[0];
+function addToCart(index) {
+  const {id} = products[index];
 
-  let matchFound = false; // Flag to check if product is already in the cart
-  let targetIndex; // To store the index of the product in the cart
+  let totalItemsEl = document.querySelectorAll('#total-items')[0];
+  let totalPriceEl = document.querySelectorAll('#total-price')[0];
 
-  // Iterate over the cart to check if the product is already added
-  cart.forEach((item, ind) => {
-    if (item.id === id) {
+  let matchFound = false;
+  let targetIndex;
+
+  cart.forEach((item, i) => {
+    if(item.id === id) {
       matchFound = true;
-      targetIndex = ind;
+      targetIndex = i;
     }
   });
 
-  if (matchFound) {
-    // If the product is already in the cart, increase the quantity and update the subtotal
+  if(matchFound) {
     const product = cart[targetIndex];
+
     product.qty += 1;
     product.subTotal = product.qty * parseFloat(product.price.slice(1));
-  } else {
-    // If the product is not in the cart, clone the product object, set initial quantity and subtotal, and add it to the cart
-    let cloneProduct = { ...products[index] };
+  }
+  else {
+    let cloneProduct = {...products[index]};
     cloneProduct.qty = 1;
     cloneProduct.subTotal = cloneProduct.qty * parseFloat(cloneProduct.price.slice(1));
-    cart.push(cloneProduct)
+    cart.push(cloneProduct);
   }
 
-  let totalItems = 0; // Initialize total items count
-  let totalPrice = 0; // Initialize total price
-  
-  // for(let key in cart) {
-    // console.log(cart[key]);
-  //   totalItems += cart[key].qty;
-  //   totalPrice += cart[key].subTotal;
-  // }
+  let totalItems = 0;
+  let totalPrice = 0;
 
-  // Iterate over the cart to calculate total items and total price
-  cart.forEach((item) => {
+  cart.forEach((item)=> {
     totalItems += item.qty;
     totalPrice += item.subTotal;
-  })
+  });
 
-  // Update the total items and total price on the UI
   totalItemsEl.innerHTML = totalItems;
   totalPriceEl.innerHTML = totalPrice.toFixed(2);
 }
 
-// Function to remove a product from the cart
+
 function removeFromCart(index) {
-  // Destructure the id from the selected product in the cart
-  const { id } = cart[index];
+  const { id } = products[index];
 
-  // Select elements that display total items and total price
-  const totalItemsEl = document.querySelectorAll('#total-items')[0];
-  const totalPriceEl = document.querySelectorAll('#total-price')[0];
-
-  // Find the index of the product in the cart using the id
   let targetIndex = cart.findIndex((item) => item.id === id);
 
   if (targetIndex !== -1) {
-    // If product is found in the cart
     const product = cart[targetIndex];
 
     if (product.qty > 1) {
-      // If more than one quantity, decrease the quantity and update the subtotal
       product.qty -= 1;
       product.subTotal = product.qty * parseFloat(product.price.slice(1));
-    } else {
-      // If only one quantity, remove the product from the cart
+    }
+    else {
       cart.splice(targetIndex, 1);
     }
+
+    let totalItems = 0;
+    let totalPrice = 0;
+    cart.forEach((item,i) => {
+      totalItems += item.qty;
+      totalPrice += item.subTotal;
+    });
+
+    let totalItemsEl = document.querySelectorAll('#total-items')[0];
+    let totalPriceEl = document.querySelectorAll('#total-price')[0];
+
+    totalItemsEl.innerHTML = totalItems;
+    totalPriceEl.innerHTML = totalPrice;
   }
-
-  let totalItems = 0; // Initialize total items count
-  let totalPrice = 0; // Initialize total price
-
-  // Iterate over the cart to calculate total items and total price
-  cart.forEach((item) => {
-    totalItems += item.qty;
-    totalPrice += item.subTotal;
-  });
-
-  // Update the total items and total price on the UI
-  totalItemsEl.innerHTML = totalItems;
-  totalPriceEl.innerHTML = totalPrice.toFixed(2);
+  else {
+    let errEl = document.querySelectorAll(".error")[0];
+    errEl.innerHTML = "<h3>Nothing to remove here.</h3>"
+    setTimeout(()=> {
+      errEl.innerHTML = '';
+    },3000)
+  }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
