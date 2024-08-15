@@ -38,92 +38,104 @@ const createProductCard = () => {
   })
 }
 
+// Call the function to generate product cards on page load
 createProductCard();
 
+// Initialize an empty array to store cart items
 let cart = [];
 
-
-
+// Function to add a product to the cart
 function addToCartinArr(index) {
+  // Destructure the id from the selected product
   const { id } = products[index];
+  
+  // Select elements that display total items and total price
   const totalItemsEl = document.querySelectorAll('#total-items')[0];
   const totalPriceEl = document.querySelectorAll('#total-price')[0];
 
-  let matchFound = false;
-  let targetIndex;
+  let matchFound = false; // Flag to check if product is already in the cart
+  let targetIndex; // To store the index of the product in the cart
 
-  cart.forEach((item, ind)=> {
-    if(item.id === id) {
+  // Iterate over the cart to check if the product is already added
+  cart.forEach((item, ind) => {
+    if (item.id === id) {
       matchFound = true;
       targetIndex = ind;
     }
   });
 
-  if(matchFound) {
+  if (matchFound) {
+    // If the product is already in the cart, increase the quantity and update the subtotal
     const product = cart[targetIndex];
-
     product.qty += 1;
     product.subTotal = product.qty * parseFloat(product.price.slice(1));
-  }
-
-  else {
-    let cloneProduct = { ...products[index]};
+  } else {
+    // If the product is not in the cart, clone the product object, set initial quantity and subtotal, and add it to the cart
+    let cloneProduct = { ...products[index] };
     cloneProduct.qty = 1;
     cloneProduct.subTotal = cloneProduct.qty * parseFloat(cloneProduct.price.slice(1));
     cart.push(cloneProduct)
   }
-  // console.log(cart);
 
-  let totalItems = 0;
-  let totalPrice = 0;
+  let totalItems = 0; // Initialize total items count
+  let totalPrice = 0; // Initialize total price
+  
   // for(let key in cart) {
-  //   // console.log(cart[key]);
+    // console.log(cart[key]);
   //   totalItems += cart[key].qty;
   //   totalPrice += cart[key].subTotal;
   // }
-  cart.forEach((item)=> {
+
+  // Iterate over the cart to calculate total items and total price
+  cart.forEach((item) => {
     totalItems += item.qty;
-    totalPrice +=item.subTotal;
+    totalPrice += item.subTotal;
   })
+
+  // Update the total items and total price on the UI
   totalItemsEl.innerHTML = totalItems;
   totalPriceEl.innerHTML = totalPrice.toFixed(2);
 }
 
-
+// Function to remove a product from the cart
 function removeFromCart(index) {
+  // Destructure the id from the selected product in the cart
   const { id } = cart[index];
+
+  // Select elements that display total items and total price
   const totalItemsEl = document.querySelectorAll('#total-items')[0];
   const totalPriceEl = document.querySelectorAll('#total-price')[0];
 
-  let targetIndex = cart.findIndex((item)=>item.id === id);
+  // Find the index of the product in the cart using the id
+  let targetIndex = cart.findIndex((item) => item.id === id);
 
-  if(targetIndex !== -1) {
+  if (targetIndex !== -1) {
+    // If product is found in the cart
     const product = cart[targetIndex];
 
-    if(product.qty > 1) {
-
+    if (product.qty > 1) {
+      // If more than one quantity, decrease the quantity and update the subtotal
       product.qty -= 1;
       product.subTotal = product.qty * parseFloat(product.price.slice(1));
-    }
-    else {
+    } else {
+      // If only one quantity, remove the product from the cart
       cart.splice(targetIndex, 1);
     }
   }
-  console.log(cart);
-  let totalItems = 0;
-  let totalPrice = 0;
-  cart.forEach((item)=>{
+
+  let totalItems = 0; // Initialize total items count
+  let totalPrice = 0; // Initialize total price
+
+  // Iterate over the cart to calculate total items and total price
+  cart.forEach((item) => {
     totalItems += item.qty;
-    console.log(item)
     totalPrice += item.subTotal;
-    console.log(typeof(totalPrice));
   });
 
+  // Update the total items and total price on the UI
   totalItemsEl.innerHTML = totalItems;
   totalPriceEl.innerHTML = totalPrice.toFixed(2);
 }
-
-
 
 
 
